@@ -50,57 +50,38 @@ const MODES = {
 const MODE_LIST = Object.values(MODES);
 
 // ─── GEMINI AI CLIENT ────────────────────────────────────────
-// Fallback chain uses lightweight dev models first to save quota
-const MODELS = ['gemini-2.0-flash-lite', 'gemini-2.5-flash-lite', 'gemini-2.0-flash'];
 
 async function callGemini(messages, mode) {
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-  if (!apiKey) {
-    throw new Error('API key not configured. Add VITE_GEMINI_API_KEY to your .env file.');
-  }
+  // Use Vercel Serverless function instead of exposing API key on frontend
+  try {
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages, mode })
+    });
 
-  const genAI = new GoogleGenerativeAI(apiKey);
-  const chatHistory = messages.slice(0, -1).map(msg => ({
-    role: msg.role === 'user' ? 'user' : 'model',
-    parts: [{ text: msg.content }],
-  }));
-  const lastMessage = messages[messages.length - 1].content;
+    const data = await response.json();
 
-  const errors = [];
-  for (const modelName of MODELS) {
-    try {
-      const model = genAI.getGenerativeModel({
-        model: modelName,
-        systemInstruction: buildSystemPrompt(mode),
-      });
-      const chat = model.startChat({ history: chatHistory });
-      const result = await chat.sendMessage(lastMessage);
-      return result.response.text();
-    } catch (err) {
-      const errStr = String(err?.message || err);
-      errors.push({ model: modelName, msg: errStr });
-      console.warn(`[OutreachIQ] ${modelName} failed:`, errStr.slice(0, 120));
-      // Small delay before trying next model
-      await new Promise(r => setTimeout(r, 1000));
-      continue;
+    if (!response.ok) {
+      if (response.status === 401) {
+        throw new Error('API key not configured on Vercel deployment server.');
+      }
+      if (response.status === 403) {
+        throw new Error('Invalid API key on Vercel deployment.');
+      }
+      if (response.status === 429) {
+        throw new Error('API quota exhausted on all models. Please wait and try again later.');
+      }
+      throw new Error(data.error || 'Unknown error occurred on server.');
     }
-  }
 
-  // All models failed — pick the best error message
-  const hasRateLimit = errors.some(e => e.msg.includes('429') || e.msg.includes('quota') || e.msg.includes('RESOURCE_EXHAUSTED'));
-  const hasAuthError = errors.some(e => e.msg.includes('403') || e.msg.includes('PERMISSION_DENIED'));
-  const hasNetworkError = errors.some(e => e.msg.includes('fetch') || e.msg.includes('network'));
-
-  if (hasRateLimit) {
-    throw new Error('API quota exhausted on all models. The free tier resets daily — please wait and try again, or upgrade your API plan at ai.google.dev.');
+    return data.text;
+  } catch (err) {
+    if (err.message.includes('fetch') || err.message.includes('Network')) {
+      throw new Error('Network error connecting to API route. Ensure /api/chat is available.');
+    }
+    throw err;
   }
-  if (hasAuthError) {
-    throw new Error('Invalid API key. Check your VITE_GEMINI_API_KEY in the .env file and get a valid key from ai.google.dev/aistudio.');
-  }
-  if (hasNetworkError) {
-    throw new Error('Network error. Check your internet connection and try again.');
-  }
-  throw new Error('All AI models are currently unavailable. Please try again in a few minutes.');
 }
 
 // ─── APP COMPONENT ───────────────────────────────────────────
