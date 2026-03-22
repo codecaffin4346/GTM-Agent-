@@ -1,0 +1,52 @@
+[dotenv@17.3.1] injecting env (1) from .env -- tip: ≡ƒ¢á∩╕Å  run anywhere with `dotenvx run -- yourcommand`
+
+
+=== TESTING MODE: lead-scorer ===
+Prompt: "Company: DataPulse, B2B SaaS, 80 employees, 6-person sales team using Slack + HubSpot + Notion. VP Sales is the decision maker. They struggle with repetitive outreach and manual reporting."
+
+Attempting model: gemini-2.0-flash-lite...
+Γ¥î FAILED with gemini-2.0-flash-lite: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/mod
+Attempting model: gemini-2.5-flash-lite...
+Γ£à SUCCESS with gemini-2.5-flash-lite:
+**Score: 9/10**
+
+**Verdict**: ≡ƒƒó STRONG FIT
+
+**Breakdown**:
+*   **Industry fit**: B2B SaaS (Ideal) - 5/5
+*   **Company size**: 80 employees (Ideal range 10-200) - 5/5
+*   **Sales team size**: 6 people (Ideal range 2-10) - 5/5
+*   **Tool stack**: Uses Slack, HubSpot, Notion (Ideal tools match) - 5/5
+*   **Pain points**: Repetitive outreach, manual reporting (Directly align with ICP pains) - 5/5
+*   **Decision maker**: VP Sales (Ideal) - 5/5
+*   **Funding stage**: Not specified, but Series A is common for this profile based on historical data. Assuming Series A or similar growth stage. (Assumed 4/5)
+
+**Recommendation**: Initiate outreach with a pain-focused email. Reference their specific pain points of repetitive outreach and manual reporting, and highlight how ThinklyLabs' AI agents can automate these tasks within their existing tool stack. Use Template ID 1 or 4.
+
+
+=== TESTING MODE: outreach ===
+Prompt: "Prospect: Alex Rivera, VP Sales at InsightLayer. They are a 40-person B2B SaaS company that just hit $1M ARR. Pain point: transitioning from inbound-only to outbound, no outreach automation."
+
+Attempting model: gemini-2.0-flash-lite...
+Γ¥î FAILED with gemini-2.0-flash-lite: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/mod
+Attempting model: gemini-2.5-flash-lite...
+Γ£à SUCCESS with gemini-2.5-flash-lite:
+1. **Subject Line**: Scaling InsightLayer's outbound motion
+
+2. **Email Body**:
+Hi Alex,
+
+Congratulations on hitting $1M ARR ΓÇô thatΓÇÖs a massive milestone.
+
+As InsightLayer transitions to a more outbound-focused strategy, I imagine the manual effort required for personalized outreach is becoming a significant time sink for your team. We're seeing many B2B SaaS companies at your stage struggle to scale outreach without sacrificing quality or adding headcount.
+
+ThinklyLabs builds AI agents that automate repetitive outreach tasks within your existing tools like Slack and HubSpot. This frees up your sales team to focus on higher-value activities.
+
+Interested in seeing how we can help you scale outbound efficiently?
+
+3. **Why This Works**:
+This email uses a "Trigger Event" and "Pain-First Opener" approach. It acknowledges a significant company achievement (hitting $1M ARR) and immediately pivots to the likely pain point associated with that growth (scaling outbound with manual processes). It focuses on the *problem* before introducing the solution.
+
+4. **Performance Prediction**:
+Expected Open Rate: ~64%
+Expected Reply Rate: ~19%
